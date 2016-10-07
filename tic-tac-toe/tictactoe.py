@@ -182,17 +182,21 @@ def checkGrid(grid):
     """ Returns (0/1/2, (i, 'r')/(i, 'c')/(i, 'd')/(i, 'id')"""
     #Check across rows
     for i in range(3):
+        if(grid[i][0] != 0): #Making sure we don't check for equivalence of zeroes
             if (grid[i][0] == grid[i][1] and grid[i][0] == grid[i][2]):
                 return [grid[i][0], (i, 'c')]
     #Check across columns
     for i in range(3):
-        if (grid[0][i] == grid[1][i] and grid[0][i] == grid[2][i]):
-            return [grid[0][i], (i, 'r')]
+        if(grid[0][i] != 0): #Making sure we don't check for equivalence of zeroes
+            if (grid[0][i] == grid[1][i] and grid[0][i] == grid[2][i]):
+                return [grid[0][i], (i, 'r')]
     #Check diagonals
     if (grid[1][1] == grid[2][2] and grid[2][2] == grid[0][0]):
-        return [grid[0][0], (i, 'd')]
+        if (grid[1][1] != 0): #Making sure we don't have a zero diagonal
+            return [grid[0][0], (i, 'd')]
     elif (grid[0][2] == grid[1][1] and grid[2][0] == grid[1][1]):
-        return [grid[0][2], (i, 'id')]
+        if (grid[0][2] != 0): #Making sure we don't have a zero inverse diagonal
+            return [grid[0][2], (i, 'id')]
     return [0, 'null'] #This only occurs if there isn't a winner
 
 def gameFinished(grid):
