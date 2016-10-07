@@ -1,14 +1,15 @@
-x = 200
-y = 50
+import os, pygame
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (200,50) # Centering screen as best as poss
 
-player1_score = 0
-player2_score = 0
 
-import os
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+"""
 
-import pygame
- 
+--------------------------
+ RESOURCES
+--------------------------
+
+"""
+
 # Define some colors
 BLACK = (0, 0, 0)
 GRAY = (25, 33, 36)
@@ -18,10 +19,17 @@ RED = (219, 50, 54)
 BLUE = (72, 133, 237)
 YELLOW = (244, 194, 13)
 
+
 # X and O
 cross = pygame.image.load("./images/x.png")# Player 1
 circle = pygame.image.load("./images/o.png") #Player 2
 
+
+"""
+----------------------
+  SETTING UP GRID
+----------------------
+"""
  
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 150
@@ -30,8 +38,7 @@ HEIGHT = 150
 # This sets the margin between each cell
 MARGIN = 5
  
-# Create a 2 dimensional array. A two dimensional
-# array is simply a list of lists.
+# Creating grid
 grid = []
 for row in range(3):
     # Add an empty array that will hold each cell
@@ -39,11 +46,18 @@ for row in range(3):
     grid.append([])
     for column in range(3):
         grid[row].append(0)  # Append a cell
- 
-# Set row 2, cell 2 to one. (Remember rows and
-# column numbers start at zero.)
-#grid[1][1] = 1
- 
+
+
+"""
+
+--------------------------------
+
+INITIALIZING PYGAME and SCREEN
+
+--------------------------------
+
+"""
+
 # Initialize pygame
 pygame.init()
 pygame.font.init()
@@ -62,17 +76,10 @@ done = False
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
-#Player turn
-player = 1
-
-#Winner
-winner = 0
-
 #In Current State: current_pos = [column][row]
-current_pos = [1,0]
+#Setting starting position to (1,1)
+current_pos = [1,1]
 current_color = GREEN
-
-
 
 
 # initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
@@ -80,6 +87,31 @@ myfont = pygame.font.Font(None, 24)
 
 # render text
 notification = myfont.render("Let's get started!", 1, (255,255,255))
+
+
+
+"""
+----------------------------------------
+  GLOBALS
+----------------------------------------
+"""
+#Player turn
+player = 1
+
+#Scores
+player1_score = 0
+player2_score = 0
+
+#Winner
+winner = 0
+
+#Warning
+warning = False
+
+#Game State
+game_state = 0
+"""0 implies game in session"""
+"""1 imples end of game, in limbo"""
 
 
 """
@@ -108,10 +140,8 @@ def moveSelector(key, grid, current_pos):
                 return(current_pos, GREEN) # Make Green
             else:
                 current_pos[1] -= 1
-                return(current_pos, RED) # Make Red               
-
-
-    
+                return(current_pos, RED) # Make Red              
+   
     elif key == 'down':
         if (current_pos[1] + 1 <= 2):
             if (grid[current_pos[0]][current_pos[1] +1] == 0):
@@ -120,8 +150,7 @@ def moveSelector(key, grid, current_pos):
             else:
                 current_pos[1] += 1
                 return(current_pos, RED) # Make Red  
-
-    
+   
     elif key == 'left':
         if (current_pos[0] - 1 >= 0):
             if (grid[current_pos[0] - 1][current_pos[1]] == 0):
@@ -130,9 +159,7 @@ def moveSelector(key, grid, current_pos):
             else:
                 current_pos[0] -= 1
                 return(current_pos, RED) # Make Red  
-       
-        
-
+           
     elif key == 'right':
         if (current_pos[0] + 1 <= 2):
             if (grid[current_pos[0] + 1][current_pos[1]] == 0):
@@ -150,9 +177,7 @@ def moveSelector(key, grid, current_pos):
         else:
             return(current_pos, RED) # Make Red 
     
-        
-warning = False
-
+ 
 def checkGrid(grid):
     """ Returns (0/1/2, (i, 'r')/(i, 'c')/(i, 'd')/(i, 'id')"""
     #Check across rows
@@ -217,9 +242,6 @@ def draw_winning_strikethrough(grid, screen):
         elif (strikethrough_type == 'id'):
             screen.blit(inverse_diagonal_win, (45, 75)) 
 
-game_state = 0
-"""0 implies game in session"""
-"""1 imples end of game, in limbo"""
 
 def gameStatus(grid):
     global screen
@@ -505,15 +527,6 @@ while not done:
 pygame.quit()
 
 
-
-"""IMPORTANT"""
-
-#Key Bindings to Grid:
-
-#Up = -1 (for Row), bound = 0
-#Down = +1 (for Row), bound = 2
-#Left = -1 (for Column), bound = 0
-#Right = +1 (for Column), bound = 2
 
 
 

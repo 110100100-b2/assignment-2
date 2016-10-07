@@ -1,11 +1,7 @@
-x = 200
-y = 50
-
-import pygame
+import pygame, os
 from random import randint
 
-import os
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (200,50)
  
 # Define some colors
 BLACK = (0, 0, 0)
