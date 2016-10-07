@@ -330,7 +330,6 @@ while not done:
                     current_pos = data[0]
                     current_color = data[1]
                     warning = False
-                    print(current_pos)
                 elif current_pos[0] == 2:
                     notification = myfont.render("You cannot move further right", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
@@ -409,14 +408,12 @@ while not done:
                     data = moveSelector('enter', grid, current_pos)
                     current_pos = data[0]
                     current_color = data[1]
-                    print('New Move  \n\n {} \n\n'.format(grid))
                     player = 2
                 elif(player == 2 and grid[current_pos[0]][current_pos[1]] == 0):
                     grid[current_pos[0]][current_pos[1]] = 2
                     data = moveSelector('enter', grid, current_pos)
                     current_pos = data[0]
                     current_color = data[1]                    
-                    print('New Move \n\n {} \n\n'.format(grid))
                     player = 1
                     
                     
