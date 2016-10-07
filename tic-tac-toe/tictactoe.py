@@ -66,9 +66,13 @@ clock = pygame.time.Clock()
 #Player turn
 player = 1
 
+#Winner
+winner = 0
+
 #In Current State: current_pos = [column][row]
 current_pos = [1,0]
 current_color = GREEN
+
 
 
 
@@ -96,6 +100,7 @@ def updateNotification(notification_object, text, screen):
 
 
 def moveSelector(key, grid, current_pos):
+    global winner
     #Returns a 2-tuple (color, current_pos)
     if key == 'up':
         if (current_pos[1] - 1 >= 0):
@@ -139,7 +144,12 @@ def moveSelector(key, grid, current_pos):
                 return(current_pos, RED) # Make Red 
             
     elif key == 'enter': #Switches player's turns and makes the current position red
-        return(current_pos, RED) # Make Red 
+        if (winner == 1):
+            return(current_pos, BLUE) # Make Blue
+        elif (winner == 2):
+            return(current_pos, YELLOW) # Make Yellow
+        else:
+            return(current_pos, RED) # Make Red 
     
         
 warning = False
@@ -159,7 +169,7 @@ def checkGrid(grid):
         return [grid[0][0], (i, 'd')]
     elif (grid[0][2] == grid[1][1] and grid[2][0] == grid[1][1]):
         return [grid[0][2], (i, 'id')]
-    return 0 #This only occurs if there isn't a winner
+    return [0, 'null'] #This only occurs if there isn't a winner
 
 def gameFinished(grid):
     #Checks to see if there is a premature winner
@@ -226,12 +236,14 @@ def gameStatus(grid):
             screen.blit(notification, (150, 40))
             if (game_state == 0):
                 player1_score += 1
+                winner = 1
             game_state = 1
         elif (result == 2):
             notification = myfont.render('Player 2 wins. Press "i" to play again', 1, (255,255,255))
             screen.blit(notification, (150, 40))
             if (game_state == 0):
-                player2_score += 1            
+                player2_score += 1
+                winner = 2
             game_state = 1
         elif (result == 0):
             notification = myfont.render('Match is drawn. Press "i" to play again', 1, (255,255,255))
@@ -412,6 +424,7 @@ while not done:
                 reset(grid)
                 current_pos = [1,1]
                 player = 1
+                winner = 0
                 game_state = 0
         
     
