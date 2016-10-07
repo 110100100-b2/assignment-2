@@ -32,6 +32,7 @@ current_direction = 'right'
 score = 0
 game_state = 0
 difficulty = 1
+message = ''
 
 """
 ------------------------------------------------------------------------------------------------------------
@@ -107,22 +108,27 @@ def updateGrid(x,y, grid):
 
 def moveSnake(grid, direction, snakeCoords, screen):
     global game_state
+    global message
     if (direction == 'right'  and game_state == 0):
         if (snakeCoords[0]['x'] < 29):
             snakeCoords.insert(0, {'x': snakeCoords[0]['x']+1, 'y':snakeCoords[0]['y']}) #Adding new head
             if (ateApple(grid, snakeCoords)):
                 pass
             elif(ateSelf(grid, snakeCoords)):
-                pass
-            elif(hitObstacle(grid, snakeCoords)):
+                message = 'You bit yourself'
+                gameOver(screen, message)                
                 game_state = 1 
-                gameOver(screen)
-                               
+            elif(hitObstacle(grid, snakeCoords)):
+                game_state = 1
+                message = 'You hit an obstacle'
+                gameOver(screen, message)                
+                                  
             else:    
                 updateGrid(snakeCoords[-1]['x'], snakeCoords[-1]['y'], grid)                
                 del snakeCoords[-1]            
         else:
-            gameOver(screen)
+            message = ''
+            gameOver(screen, message)
             game_state = 1
             
             
@@ -133,15 +139,19 @@ def moveSnake(grid, direction, snakeCoords, screen):
             if (ateApple(grid, snakeCoords)):
                 pass
             elif(ateSelf(grid, snakeCoords)):
-                pass
+                message = 'You bit yourself'
+                gameOver(screen, message)                
+                game_state = 1 
             elif(hitObstacle(grid, snakeCoords)):
-                gameOver(screen)
-                game_state = 1    
+                message = 'You hit an obstacle'
+                gameOver(screen, message)                
+                game_state = 1      
             else:
                 updateGrid(snakeCoords[-1]['x'], snakeCoords[-1]['y'], grid)
                 del snakeCoords[-1]
         else:
-            gameOver(screen)
+            message = ''
+            gameOver(screen, message)
             game_state = 1
     elif(direction == 'up'  and game_state == 0):
         if (snakeCoords[0]['y'] >= 1):            
@@ -149,15 +159,19 @@ def moveSnake(grid, direction, snakeCoords, screen):
             if (ateApple(grid, snakeCoords)):
                 pass
             elif(ateSelf(grid, snakeCoords)):
-                pass
+                message = 'You bit yourself'
+                gameOver(screen, message)                
+                game_state = 1 
             elif(hitObstacle(grid, snakeCoords)):
-                gameOver(screen)
+                message = 'You hit an obstacle'
+                gameOver(screen, message)                
                 game_state = 1    
             else:
                 updateGrid(snakeCoords[-1]['x'], snakeCoords[-1]['y'], grid)
                 del snakeCoords[-1]
         else:
-            gameOver(screen)
+            message = ''
+            gameOver(screen, message)
             game_state = 1
 
     elif(direction == 'down'  and game_state == 0):
@@ -166,15 +180,19 @@ def moveSnake(grid, direction, snakeCoords, screen):
             if (ateApple(grid, snakeCoords)):
                 pass
             elif(ateSelf(grid, snakeCoords)):
-                pass
+                message = 'You bit yourself'
+                gameOver(screen, message)                
+                game_state = 1 
             elif(hitObstacle(grid, snakeCoords)):
-                gameOver(screen)
+                message = 'You hit an obstacle'
+                gameOver(screen, message)                
                 game_state = 1    
             else:
                 updateGrid(snakeCoords[-1]['x'], snakeCoords[-1]['y'], grid)
                 del snakeCoords[-1] 
         else:
-            gameOver(screen)
+            message = ''
+            gameOver(screen, message)
             game_state = 1
 
 def drawSnake(snakeCoords, grid):
@@ -185,11 +203,19 @@ def drawSnake(snakeCoords, grid):
         
 
 
-def gameOver(screen):
+def gameOver(screen, message):
     h1 = pygame.font.SysFont("monospace", 36)
+    h2 = pygame.font.SysFont("monospace", 22)
     h3 = pygame.font.SysFont("monospace", 15)
     # render text
     game_over = h1.render("Game Over!", 1, (255,255,0))
+    if (message != ''):
+        if (message == 'You bit yourself'):
+            message_text = h2.render(message, 1, (255,255,0))
+            screen.blit(message_text, (240, 200))            
+        elif(message == 'You hit an obstacle'):
+            message_text = h2.render(message, 1, (255,255,0))
+            screen.blit(message_text, (225, 200))
     play_again = h3.render("Press 'r' to play again.", 1, (255,255,0))
     screen.blit(game_over, (240, 100))
     screen.blit(play_again, (240, 500)) 
@@ -267,18 +293,9 @@ def ateApple(grid, snakeCoords):
 
 def ateSelf(grid, snakeCoords):
     global score
-    #score -= length of deleted parts
     head = snakeCoords[0]
     for i in range(1, len(snakeCoords)):
         if (head == snakeCoords[i]): #Snake bit itself
-            remaining_snake = snakeCoords[:i]
-            bit_off_part = snakeCoords[i+1:]
-            score -= len(bit_off_part)
-            snakeCoords = remaining_snake
-            for j in range(len(bit_off_part)): #Zeroing out entries of bit_off_part
-                x = bit_off_part[j]['x']
-                y = bit_off_part[j]['y']
-                grid[y][x] = 0
             return True  
     return False      
         
@@ -288,6 +305,7 @@ def reset():
     global apple
     global snakeCoords
     global obstacles
+    global message
     for i in range(30):
         for j in range(30):
             grid[i][j] = 0
@@ -295,6 +313,7 @@ def reset():
     apple = createApple(grid)
     score = 0
     difficulty = 1
+    message = ''
     startingPosition = randomStartingPosition()
     snakeCoords = [{'x': startingPosition[0],     'y': startingPosition[0]}, #Head
                    {'x': startingPosition[0]- 1,  'y': startingPosition[0]},
@@ -391,7 +410,7 @@ while not done:
     
     #Displaying Game Over Screen
     if(game_state == 1):
-            gameOver(screen)    
+            gameOver(screen, message)       
  
     # Limit to 15 frames per second
     clock.tick(8 + difficulty)
