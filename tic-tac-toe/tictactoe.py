@@ -282,9 +282,11 @@ def drawBoard(screen):
     global player2_score
     global player
     tictactoe_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 36)
-    score_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 20)
-    player1_score_text = score_font.render('Player 1 (Score) : {}'.format(player1_score), 1, (255,255,255))
-    player2_score_text = score_font.render('Player 2 (Score) : {}'.format(player2_score), 1, (255,255,255))
+    score_h1_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 24)
+    score_text = score_h1_font.render('Scores:', 1, (255,255,255))
+    score_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 16)
+    player1_score_text = score_font.render('Player 1 : {}'.format(player1_score), 1, (255,255,255))
+    player2_score_text = score_font.render('Player 2 : {}'.format(player2_score), 1, (255,255,255))
     current_player_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 20)
     current_player_text = current_player_font.render('Current Turn: Player {}'.format(player), 1, (255,255,255))
     tictactoe = tictactoe_font.render("TIC-TAC-TOE", 1, (255,255,255)) 
@@ -293,8 +295,9 @@ def drawBoard(screen):
     legend = pygame.image.load('./images/legend.png')
     screen.blit(tictactoe, (640, 50))
     screen.blit(legend, (580, 120))
-    screen.blit(current_player_text, (630, 375))
-    screen.blit(player1_score_text, (630, 460))
+    screen.blit(current_player_text, (630, 365))
+    screen.blit(score_text, (630, 430))
+    screen.blit(player1_score_text, (630, 475))
     screen.blit(player2_score_text, (630, 500)) 
             
             
