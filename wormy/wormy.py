@@ -2,6 +2,14 @@ import pygame, os
 from random import randint
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (200,50)
+
+"""
+
+------------------------------------------------------------------------------------------------------------
+ RESOURCES
+------------------------------------------------------------------------------------------------------------
+
+"""
  
 # Define some colors
 BLACK = (0, 0, 0)
@@ -11,12 +19,25 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLUE = (51,104,255)
 
-#GLOBALS
+"""
+
+------------------------------------------------------------------------------------------------------------
+ GLOBALS
+------------------------------------------------------------------------------------------------------------
+
+"""
+
 length = 0 #length of snake
 current_direction = 'right'
 score = 0
 game_state = 0
 difficulty = 1
+
+"""
+------------------------------------------------------------------------------------------------------------
+  SETTING UP GRID
+------------------------------------------------------------------------------------------------------------
+"""
  
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 20
@@ -25,8 +46,7 @@ HEIGHT = 20
 # This sets the margin between each cell
 MARGIN = 2
  
-# Create a 2 dimensional array. A two dimensional
-# array is simply a list of lists.
+# Creating grid
 grid = []
 for row in range(30):
     # Add an empty array that will hold each cell
@@ -35,8 +55,16 @@ for row in range(30):
     for column in range(30):
         grid[row].append(0)  # Append a cell
  
-# Set row 1, cell 5 to one. (Remember rows and
-# column numbers start at zero.)
+
+"""
+
+------------------------------------------------------------------------------------------------------------
+
+INITIALIZING PYGAME and SCREEN
+
+------------------------------------------------------------------------------------------------------------
+
+"""
 
 
 def randomStartingPosition():
@@ -61,6 +89,17 @@ pygame.display.set_caption("Snakes")
  
 # Loop until the user clicks the close button.
 done = False
+
+"""
+
+------------------------------------------------------------------------------------------------------------
+
+  FUNCTIONS
+
+------------------------------------------------------------------------------------------------------------
+
+
+"""
 
 def updateGrid(x,y, grid):
     grid[y][x] = 0
@@ -154,7 +193,6 @@ def gameOver(screen):
     play_again = h3.render("Press 'r' to play again.", 1, (255,255,0))
     screen.blit(game_over, (240, 100))
     screen.blit(play_again, (240, 500)) 
-
         
         
 def drawGrid(grid):
@@ -197,7 +235,7 @@ def createObstacles():
         grid[y][x] = 3
     return obstacles           
 
-     
+#Creating Obstacles     
 obstacles = createObstacles()
 
 def createApple(grid):
@@ -212,6 +250,7 @@ def createApple(grid):
             unique = True
     return [rand_x, rand_y]
 
+#Creating Apple 
 apple = createApple(grid)
             
 def ateApple(grid, snakeCoords):
@@ -221,7 +260,6 @@ def ateApple(grid, snakeCoords):
     if (snakeCoords[0]['x'] == apple[0] and snakeCoords[0]['y'] == apple[1]):
         grid[apple[1]][apple[0]] = 0
         score += 1
-        print('Score is {}'.format(score))
         apple = createApple(grid)
         return True
     else:
@@ -301,7 +339,18 @@ def drawBoard(screen):
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
  
-# -------- Main Program Loop -----------
+
+"""
+
+-----------------------------------------------------
+
+      MAIN PROGRAM LOOP
+
+-----------------------------------------------------
+
+    
+"""
+
 while not done:
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
@@ -324,13 +373,12 @@ while not done:
                 reset()
                 game_state = 0
     
-    
+    #Setting difficulty
     difficulty = (score // 3) + 1
+    
     # Set the screen background
     screen.fill(GRAY)    
-    
-    
- 
+     
     # Draw the grid
     drawGrid(grid)
     
@@ -351,8 +399,6 @@ while not done:
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
  
-# Be IDLE friendly. If you forget this line, the program will 'hang'
-# on exit.
 pygame.quit()
 
 
