@@ -1,7 +1,7 @@
 import pygame, os
 from random import randint
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (200,50)
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (200,50) # Centering screen as best as possible
 
 """
 

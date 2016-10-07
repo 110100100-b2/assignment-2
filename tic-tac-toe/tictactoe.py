@@ -1,5 +1,5 @@
 import os, pygame
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (200,50) # Centering screen as best as poss
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (200,50) # Centering screen as best as possible
 
 
 """
@@ -82,7 +82,7 @@ current_pos = [1,1]
 current_color = GREEN
 
 
-# initialize font; must be called after 'pygame.init()' to avoid 'Font not Initialized' error
+# initialize font
 myfont = pygame.font.Font(None, 24)
 
 # render text
