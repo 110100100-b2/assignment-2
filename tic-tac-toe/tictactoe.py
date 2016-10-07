@@ -186,19 +186,19 @@ def gameStatus(grid):
         result = checkGrid(grid)
         if (result == 1):
             notification = myfont.render('Player 1 wins. Press "i" to play again', 1, (255,255,255))
-            screen.blit(notification, (225, 60))
+            screen.blit(notification, (150, 40))
             if (game_state == 0):
                 player1_score += 1
             game_state = 1
         elif (result == 2):
             notification = myfont.render('Player 2 wins. Press "i" to play again', 1, (255,255,255))
-            screen.blit(notification, (225, 60))
+            screen.blit(notification, (150, 40))
             if (game_state == 0):
                 player2_score += 1            
             game_state = 1
         elif (result == 0):
             notification = myfont.render('Match is drawn. Press "i" to play again', 1, (255,255,255))
-            screen.blit(notification, (225, 60))
+            screen.blit(notification, (150, 40))
             game_state = 1
         
 def reset(grid):
@@ -222,7 +222,7 @@ while not done:
             
             """Player 1 Controls"""
             
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP and game_state == 0:
                 if (player == 1 and current_pos[1] != 0):
                     data = moveSelector('up', grid, current_pos)
                     current_pos = data[0]
@@ -237,7 +237,7 @@ while not done:
                     notification = myfont.render("It is player 2's turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
                 
-            elif event.key == pygame.K_DOWN:
+            elif event.key == pygame.K_DOWN and game_state == 0:
                 if (player == 1 and current_pos[1] != 2):
                     data = moveSelector('down', grid, current_pos)
                     current_pos = data[0]
@@ -251,7 +251,7 @@ while not done:
                     notification = myfont.render("It is player 2's turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
                     warning = True
-            elif event.key == pygame.K_LEFT:
+            elif event.key == pygame.K_LEFT and game_state == 0:
                 if (player == 1 and current_pos[0] != 0):
                     data = moveSelector('left', grid, current_pos)
                     current_pos = data[0]
@@ -265,7 +265,7 @@ while not done:
                     notification = myfont.render("It is player 2's turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
                     warning = True
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_RIGHT and game_state == 0:
                 if (player == 1 and current_pos[0] != 2):
                     data = moveSelector('right', grid, current_pos)
                     current_pos = data[0]
@@ -389,10 +389,10 @@ while not done:
                 color = current_color
                 if (current_color == RED):
                     notification = myfont.render("You cannot use this spot", 1, (255,255,255))
-                    screen.blit(notification, (225, 625-60))
+                    screen.blit(notification, (200, 625-60))
                 elif (current_color != RED and warning == False):
                     notification = myfont.render("This spot is available", 1, (255,255,255))
-                    screen.blit(notification, (225, 625-60))                    
+                    screen.blit(notification, (200, 625-60))                    
                     
             elif grid[column][row] == 1: #This convention is kind of backwards because of the way cartesian co-ordinates are switched with inex notation aij
                 color = BLUE                 
