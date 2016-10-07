@@ -136,20 +136,21 @@ def moveSelector(key, grid, current_pos):
         
 warning = False
 
-def checkGrid(grid):    
+def checkGrid(grid):
+    """ Returns (0/1/2, (i, 'r')/(i, 'c')/(i, 'd')/(i, 'id')"""
     #Check across rows
     for i in range(3):
             if (grid[i][0] == grid[i][1] and grid[i][0] == grid[i][2]):
-                return grid[i][0]
+                return [grid[i][0], (i, 'c')]
     #Check across columns
     for i in range(3):
         if (grid[0][i] == grid[1][i] and grid[0][i] == grid[2][i]):
-            return grid[0][i]
+            return [grid[0][i], (i, 'r')]
     #Check diagonals
     if (grid[1][1] == grid[2][2] and grid[2][2] == grid[0][0]):
-        return grid[0][0]
+        return [grid[0][0], (i, 'd')]
     elif (grid[0][2] == grid[1][1] and grid[2][0] == grid[1][1]):
-        return grid[0][2]
+        return [grid[0][2], (i, 'id')]
     return 0 #This only occurs if there isn't a winner
 
 """print(checkGrid([[1,2,2],
@@ -160,7 +161,9 @@ def checkGrid(grid):
 
 def gameFinished(grid):
     #Checks to see if there is a premature winner
-    if (checkGrid(grid) != 0): #This is only false if all zero's or a draw
+    data = checkGrid(grid)
+    result = data[0]
+    if (result != 0): #This is only false if all zero's or a draw
             return True    #Returns True if there is a premature winner
     
     #Checks to see if every move has been played
@@ -183,7 +186,8 @@ def gameStatus(grid):
     global player1_score
     global player2_score
     if (gameFinished(grid) == True):
-        result = checkGrid(grid)
+        data = checkGrid(grid)
+        result = data[0]
         if (result == 1):
             notification = myfont.render('Player 1 wins. Press "i" to play again', 1, (255,255,255))
             screen.blit(notification, (150, 40))
@@ -207,7 +211,39 @@ def reset(grid):
             grid[i][j] = 0
             
             
-
+def draw_winning_strikethrough(grid, screen):
+    row_win = pygame.image.load("./images/row-win.png")
+    column_win = pygame.image.load("./images/columns-win.png") 
+    diagonal_win = pygame.image.load("./images/main-diagonal-win.png") 
+    inverse_diagonal_win = pygame.image.load("./images/flipped-diagonal-win.png")
+    data = checkGrid(grid)
+    result = data[0]
+    if (gameFinished(grid) == True and result != 0):
+        data = checkGrid(grid)
+        strikethrough = data[1]
+        i = strikethrough[0]
+        strikethrough_type = strikethrough[1]
+        if (strikethrough_type == 'r'):
+            if (i == 0):
+                screen.blit(row_win, (55, 115))
+            elif(i == 1):
+                screen.blit(row_win, (55, 270))
+            elif(i == 2):
+                screen.blit(row_win, (55, 425))
+            
+        elif (strikethrough_type == 'c'):
+            if (i == 0):
+                screen.blit(column_win, (105, 85))
+            elif(i == 1):
+                screen.blit(column_win, (262, 85))
+            elif(i == 2):
+                screen.blit(column_win, (420, 85))
+        elif (strikethrough_type == 'd'):
+            screen.blit(diagonal_win, (45, 75))
+        elif (strikethrough_type == 'id'):
+            screen.blit(inverse_diagonal_win, (45, 75))        
+    
+    
                 
                 
 
@@ -283,7 +319,6 @@ while not done:
                     
                     
              #Player 2 Controls
-            
             
             if event.key == pygame.K_w and game_state == 0:
                 if (player == 2 and current_pos[1] != 0):
@@ -361,9 +396,6 @@ while not done:
                 game_state = 0
         
     
-                   
-            
- 
     # Set the screen background
     screen.fill(BLACK)
     # Updating notification
@@ -379,8 +411,6 @@ while not done:
     #Checking game status
     gameStatus(grid)
     
-    
-    
     # Draw the grid
     for row in range(3):
         for column in range(3):
@@ -389,10 +419,10 @@ while not done:
                 color = current_color
                 if (current_color == RED):
                     notification = myfont.render("You cannot use this spot", 1, (255,255,255))
-                    screen.blit(notification, (200, 625-60))
+                    screen.blit(notification, (225, 625-60))
                 elif (current_color != RED and warning == False):
                     notification = myfont.render("This spot is available", 1, (255,255,255))
-                    screen.blit(notification, (200, 625-60))                    
+                    screen.blit(notification, (225, 625-60))                    
                     
             elif grid[column][row] == 1: #This convention is kind of backwards because of the way cartesian co-ordinates are switched with inex notation aij
                 color = BLUE                 
@@ -415,7 +445,8 @@ while not done:
             
     
        
-    
+    #Drawing winning strikethrough
+    draw_winning_strikethrough(grid, screen)
     
     # Limit to 60 frames per second
     clock.tick(60)
