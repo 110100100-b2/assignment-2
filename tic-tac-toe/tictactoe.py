@@ -136,7 +136,10 @@ def moveSelector(key, grid, current_pos):
                 return(current_pos, GREEN) # Make Green
             else:
                 current_pos[0] += 1
-                return(current_pos, RED) # Make Red  
+                return(current_pos, RED) # Make Red 
+            
+    elif key == 'enter': #Switches player's turns and makes the current position red
+        return(current_pos, RED) # Make Red 
     
         
 warning = False
@@ -391,10 +394,16 @@ while not done:
             if event.key == pygame.K_RETURN:
                 if (player == 1 and grid[current_pos[0]][current_pos[1]] == 0):
                     grid[current_pos[0]][current_pos[1]] = 1
+                    data = moveSelector('enter', grid, current_pos)
+                    current_pos = data[0]
+                    current_color = data[1]
                     print('New Move  \n\n {} \n\n'.format(grid))
                     player = 2
                 elif(player == 2 and grid[current_pos[0]][current_pos[1]] == 0):
                     grid[current_pos[0]][current_pos[1]] = 2
+                    data = moveSelector('enter', grid, current_pos)
+                    current_pos = data[0]
+                    current_color = data[1]                    
                     print('New Move \n\n {} \n\n'.format(grid))
                     player = 1
                     
