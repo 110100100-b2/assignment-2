@@ -293,9 +293,9 @@ def drawBoard(screen):
     legend = pygame.image.load('./images/legend.png')
     screen.blit(legend, (640, 120))
     screen.blit(snakes, (700, 50))
-    screen.blit(info_text_1, (680, 300))
-    screen.blit(info_text_2, (680, 330))
-    screen.blit(info_text_3, (680, 350))
+    screen.blit(info_text_1, (680, 315))
+    screen.blit(info_text_2, (680, 345))
+    screen.blit(info_text_3, (680, 365))
     screen.blit(difficulty_text, (700, 500))
     screen.blit(score_text, (700, 550)) 
     
