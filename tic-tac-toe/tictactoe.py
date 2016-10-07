@@ -66,8 +66,8 @@ clock = pygame.time.Clock()
 #Player turn
 player = 1
 
-
-current_pos = [1,1]
+#In Current State: current_pos = [column][row]
+current_pos = [1,0]
 current_color = GREEN
 
 
@@ -79,11 +79,16 @@ myfont = pygame.font.Font(None, 24)
 notification = myfont.render("Let's get started!", 1, (255,255,255))
 
 
+"""
+
+-----------------------------
+
+  FUNCTIONS
+
+-----------------------------
 
 
-
-
-#surface = pygame.image.load('foo.png')
+"""
 
 def updateNotification(notification_object, text, screen):
     notification_object = myfont.render(text, 1, (255,255,255))
@@ -153,12 +158,6 @@ def checkGrid(grid):
         return [grid[0][2], (i, 'id')]
     return 0 #This only occurs if there isn't a winner
 
-"""print(checkGrid([[1,2,2],
-                 [1,2,3],
-                 [3,3,2]]))"""
-
-
-
 def gameFinished(grid):
     #Checks to see if there is a premature winner
     data = checkGrid(grid)
@@ -174,6 +173,37 @@ def gameFinished(grid):
     #Returns true in the case of a draw and ever move played
     return True
 
+def draw_winning_strikethrough(grid, screen):
+    row_win = pygame.image.load("./images/row-win.png")
+    column_win = pygame.image.load("./images/columns-win.png") 
+    diagonal_win = pygame.image.load("./images/main-diagonal-win.png") 
+    inverse_diagonal_win = pygame.image.load("./images/flipped-diagonal-win.png")
+    data = checkGrid(grid)
+    result = data[0]
+    if (gameFinished(grid) == True and result != 0):
+        data = checkGrid(grid)
+        strikethrough = data[1]
+        i = strikethrough[0]
+        strikethrough_type = strikethrough[1]
+        if (strikethrough_type == 'r'):
+            if (i == 0):
+                screen.blit(row_win, (55, 115))
+            elif(i == 1):
+                screen.blit(row_win, (55, 270))
+            elif(i == 2):
+                screen.blit(row_win, (55, 425))
+            
+        elif (strikethrough_type == 'c'):
+            if (i == 0):
+                screen.blit(column_win, (105, 85))
+            elif(i == 1):
+                screen.blit(column_win, (262, 85))
+            elif(i == 2):
+                screen.blit(column_win, (420, 85))
+        elif (strikethrough_type == 'd'):
+            screen.blit(diagonal_win, (45, 75))
+        elif (strikethrough_type == 'id'):
+            screen.blit(inverse_diagonal_win, (45, 75)) 
 
 game_state = 0
 """0 implies game in session"""
@@ -211,43 +241,21 @@ def reset(grid):
             grid[i][j] = 0
             
             
-def draw_winning_strikethrough(grid, screen):
-    row_win = pygame.image.load("./images/row-win.png")
-    column_win = pygame.image.load("./images/columns-win.png") 
-    diagonal_win = pygame.image.load("./images/main-diagonal-win.png") 
-    inverse_diagonal_win = pygame.image.load("./images/flipped-diagonal-win.png")
-    data = checkGrid(grid)
-    result = data[0]
-    if (gameFinished(grid) == True and result != 0):
-        data = checkGrid(grid)
-        strikethrough = data[1]
-        i = strikethrough[0]
-        strikethrough_type = strikethrough[1]
-        if (strikethrough_type == 'r'):
-            if (i == 0):
-                screen.blit(row_win, (55, 115))
-            elif(i == 1):
-                screen.blit(row_win, (55, 270))
-            elif(i == 2):
-                screen.blit(row_win, (55, 425))
-            
-        elif (strikethrough_type == 'c'):
-            if (i == 0):
-                screen.blit(column_win, (105, 85))
-            elif(i == 1):
-                screen.blit(column_win, (262, 85))
-            elif(i == 2):
-                screen.blit(column_win, (420, 85))
-        elif (strikethrough_type == 'd'):
-            screen.blit(diagonal_win, (45, 75))
-        elif (strikethrough_type == 'id'):
-            screen.blit(inverse_diagonal_win, (45, 75))        
+       
     
+"""
+
+-----------------------------------------------------
+
+      MAIN PROGRAM LOOP
+
+-----------------------------------------------------
+
     
+"""
                 
                 
 
-# -------- Main Program Loop -----------
 while not done:
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
@@ -381,11 +389,13 @@ while not done:
                         
            
             if event.key == pygame.K_RETURN:
-                if (player == 1):
-                    grid[current_pos[0]][current_pos[1]] = 1                                     
+                if (player == 1 and grid[current_pos[0]][current_pos[1]] == 0):
+                    grid[current_pos[0]][current_pos[1]] = 1
+                    print('New Move  \n\n {} \n\n'.format(grid))
                     player = 2
-                else:
+                elif(player == 2 and grid[current_pos[0]][current_pos[1]] == 0):
                     grid[current_pos[0]][current_pos[1]] = 2
+                    print('New Move \n\n {} \n\n'.format(grid))
                     player = 1
                     
                     
