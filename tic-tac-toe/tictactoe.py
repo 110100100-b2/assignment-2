@@ -321,7 +321,11 @@ while not done:
             
         elif event.type == pygame.KEYDOWN:            
             
-            """Player 1 Controls"""
+            """
+            ------------------
+            Player 1 Controls
+            ------------------
+            """
             
             if event.key == pygame.K_UP and game_state == 0:
                 if (player == 1 and current_pos[1] != 0):
@@ -382,7 +386,11 @@ while not done:
                     warning = True
                     
                     
-             #Player 2 Controls
+            """
+            ------------------
+            Player 2 Controls
+            ------------------
+            """
             
             if event.key == pygame.K_w and game_state == 0:
                 if (player == 2 and current_pos[1] != 0):
