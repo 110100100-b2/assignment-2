@@ -11,13 +11,12 @@ import pygame
  
 # Define some colors
 BLACK = (0, 0, 0)
+GRAY = (25, 33, 36)
 WHITE = (255, 255, 255)
 GREEN = (60, 186, 84)
 RED = (219, 50, 54)
 BLUE = (72, 133, 237)
 YELLOW = (244, 194, 13)
-
-screen= pygame.display.set_mode((600,625))
 
 # X and O
 cross = pygame.image.load("./images/x.png")# Player 1
@@ -51,7 +50,7 @@ pygame.font.init()
 
  
 # Set the HEIGHT and WIDTH of the screen
-WINDOW_SIZE = [600, 625]
+WINDOW_SIZE = [900, 625]
 screen = pygame.display.set_mode(WINDOW_SIZE)
  
 # Set title of screen
@@ -255,6 +254,27 @@ def reset(grid):
         for j in range(3):
             grid[i][j] = 0
             
+
+def drawBoard(screen):
+    global player1_score
+    global player2_score
+    global player
+    tictactoe_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 36)
+    score_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 20)
+    player1_score_text = score_font.render('Player 1 (Score) : {}'.format(player1_score), 1, (255,255,255))
+    player2_score_text = score_font.render('Player 2 (Score) : {}'.format(player2_score), 1, (255,255,255))
+    current_player_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 20)
+    current_player_text = current_player_font.render('Current Turn: Player {}'.format(player), 1, (255,255,255))
+    tictactoe = tictactoe_font.render("TIC-TAC-TOE", 1, (255,255,255)) 
+    info_font = pygame.font.SysFont("monospace", 10)
+    info_text_1 = info_font.render("It is player {}'s turn",1, (255,255,255))
+    legend = pygame.image.load('./images/legend.png')
+    screen.blit(tictactoe, (640, 50))
+    screen.blit(legend, (580, 120))
+    screen.blit(current_player_text, (630, 375))
+    screen.blit(player1_score_text, (630, 460))
+    screen.blit(player2_score_text, (630, 500)) 
+            
             
        
     
@@ -426,16 +446,9 @@ while not done:
         
     
     # Set the screen background
-    screen.fill(BLACK)
+    screen.fill(GRAY)
     # Updating notification
-    screen.blit(notification, (225, 625-60))
-    
-    #Rendering score
-    player1_score_text = myfont.render("Player 1: {}".format(player1_score), 1, (255,255,255))
-    player2_score_text = myfont.render("Player 2: {}".format(player2_score), 1, (255,255,255))
-    screen.blit(player1_score_text, (500, 20))
-    screen.blit(player2_score_text, (500, 50))
-    
+    screen.blit(notification, (225, 625-60))     
     
     #Checking game status
     gameStatus(grid)
@@ -476,6 +489,9 @@ while not done:
        
     #Drawing winning strikethrough
     draw_winning_strikethrough(grid, screen)
+    
+    #Drawing Board
+    drawBoard(screen)
     
     # Limit to 60 frames per second
     clock.tick(60)
