@@ -1,6 +1,8 @@
 import os, pygame
+import Tkinter as Tk
+import time
+import UsernameData
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (200,50) # Centering screen as best as possible
-
 
 """
 
@@ -112,6 +114,67 @@ warning = False
 game_state = 0
 """0 implies game in session"""
 """1 imples end of game, in limbo"""
+
+usrTools = UsernameData.UsernameData()
+usrTools.loadCurrentData()
+
+"""
+
+------------------------------------------------------------------------------------------------------------
+
+      CLASSES
+
+------------------------------------------------------------------------------------------------------------
+
+    
+"""            
+user={}
+
+def center(root): #to center our roots
+    root.update_idletasks() # to ensure accuracy in height and width values
+    width = root.winfo_screenwidth()
+    height = root.winfo_screenheight()
+    geo = root.geometry()
+    size = tuple(geo.split('x'))
+    size2 = tuple(size[1].split('+'))
+    
+    x = width/2 - int(size[0])/2
+    y = height/2 - int(size2[0])/2
+    root.geometry("%dx%d+%d+%d" % ((int(size[0]), int(size2[0])) + (x, y)))
+    
+class username():
+    
+    def __init__(self, playerNo):
+        self.root = Tk.Tk()
+        self.root.wm_title("Tic-Tac-Toe")
+        self.label = Tk.Label(self.root, text=("Player " + str(playerNo) + ", enter your username: "))
+        self.label.pack()
+        self.name = Tk.StringVar()
+        Tk.Entry(self.root, textvariable=self.name).pack()
+
+        self.buttontext = Tk.StringVar()
+        self.buttontext.set("Done")
+        Tk.Button(self.root,
+                  textvariable=self.buttontext,
+                  command=self.btnclicked).pack()
+
+        self.label = Tk.Label(self.root, text="")
+        self.label.pack()
+        center(self.root)
+
+        self.root.mainloop()
+        
+    def btnclicked(self):
+        
+        user['name']=self.name.get()
+        
+        self.label.destroy()
+        self.root.destroy()
+
+    def button_click(self, e):
+        pass 
+    
+
 
 
 """
@@ -253,21 +316,26 @@ def gameStatus(grid):
     global game_state
     global player1_score
     global player2_score
+    global usrTools
     if (gameFinished(grid) == True):
         data = checkGrid(grid)
         result = data[0]
         if (result == 1):
-            notification = myfont.render('Player 1 wins. Press "i" to play again', 1, (255,255,255))
+            notification = myfont.render(P1+' wins. Press "i" to play again', 1, (255,255,255))
             screen.blit(notification, (150, 40))
             if (game_state == 0):
                 player1_score += 1
+                usrTools.addNewResult(P1)
+                usrTools.syncFile()
                 winner = 1
             game_state = 1
         elif (result == 2):
-            notification = myfont.render('Player 2 wins. Press "i" to play again', 1, (255,255,255))
+            notification = myfont.render(P2+' wins. Press "i" to play again', 1, (255,255,255))
             screen.blit(notification, (150, 40))
             if (game_state == 0):
                 player2_score += 1
+                usrTools.addNewResult(P2)
+                usrTools.syncFile()
                 winner = 2
             game_state = 1
         elif (result == 0):
@@ -289,23 +357,25 @@ def drawBoard(screen):
     score_h1_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 24)
     score_text = score_h1_font.render('Scores:', 1, (255,255,255))
     score_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 16)
-    player1_score_text = score_font.render('Player 1 : {}'.format(player1_score), 1, (255,255,255))
-    player2_score_text = score_font.render('Player 2 : {}'.format(player2_score), 1, (255,255,255))
+    player1_score_text = score_font.render(P1+' : {}'.format(player1_score), 1, (255,255,255))
+    player2_score_text = score_font.render(P2+' : {}'.format(player2_score), 1, (255,255,255))
     current_player_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 20)
-    current_player_text = current_player_font.render('Current Turn: Player {}'.format(player), 1, (255,255,255))
+    current_player_text = current_player_font.render("Current Turn: Player {}".format(player), 1, (255,255,255))
+    instruct_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 20)
+    instruct_text = instruct_font.render("'L' for Leaderboard, 'C' for Controls".format(player), 1, (255,255,255))
     tictactoe = tictactoe_font.render("TIC-TAC-TOE", 1, (255,255,255)) 
     info_font = pygame.font.SysFont("monospace", 10)
     info_text_1 = info_font.render("It is player {}'s turn",1, (255,255,255))
     legend = pygame.image.load('./images/legend.png')
-    screen.blit(tictactoe, (640, 50))
+    screen.blit(tictactoe, (610, 50))
     screen.blit(legend, (580, 120))
-    screen.blit(current_player_text, (630, 365))
-    screen.blit(score_text, (630, 430))
-    screen.blit(player1_score_text, (630, 475))
-    screen.blit(player2_score_text, (630, 500)) 
+    screen.blit(instruct_text, (610, 340))
+    screen.blit(current_player_text, (610, 375))
+    screen.blit(score_text, (610, 440))
+    screen.blit(player1_score_text, (610, 485))
+    screen.blit(player2_score_text, (610, 510)) 
             
-            
-       
+
     
 """
 
@@ -318,7 +388,10 @@ def drawBoard(screen):
     
 """
                 
-                
+p1=username(1)
+P1=user['name']
+p2=username(2)
+P2=user['name']
 
 while not done:
     for event in pygame.event.get():  # User did something
@@ -346,7 +419,7 @@ while not done:
                     screen.blit(notification, (225, 625-60))
                 else:
                     warning = True
-                    notification = myfont.render("It is player 2's turn", 1, (255,255,255))
+                    notification = myfont.render("It is "+P2+"'s turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
                 
             elif event.key == pygame.K_DOWN and game_state == 0:
@@ -360,7 +433,7 @@ while not done:
                     screen.blit(notification, (225, 625-60))
                     warning = True
                 else:
-                    notification = myfont.render("It is player 2's turn", 1, (255,255,255))
+                    notification = myfont.render("It is "+P2+"'s turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
                     warning = True
             elif event.key == pygame.K_LEFT and game_state == 0:
@@ -374,7 +447,7 @@ while not done:
                     screen.blit(notification, (225, 625-60))
                     warning = True
                 else:
-                    notification = myfont.render("It is player 2's turn", 1, (255,255,255))
+                    notification = myfont.render("It is "+P2+"'s turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
                     warning = True
             elif event.key == pygame.K_RIGHT and game_state == 0:
@@ -388,10 +461,10 @@ while not done:
                     screen.blit(notification, (225, 625-60))
                     warning = True
                 else:
-                    notification = myfont.render("It is player 2's turn", 1, (255,255,255))
+                    notification = myfont.render("It is "+P2+"'s turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))  
                     warning = True
-                    
+                                    
                     
             """
             ------------------
@@ -410,7 +483,7 @@ while not done:
                     screen.blit(notification, (225, 625-60))
                     warning = True
                 else:
-                    notification = myfont.render("It is player 1's turn", 1, (255,255,255))
+                    notification = myfont.render("It is "+P1+"'s turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
                     warning = True
                 
@@ -425,7 +498,7 @@ while not done:
                     screen.blit(notification, (225, 625-60)) 
                     warning = True
                 else:
-                    notification = myfont.render("It is player 1's turn", 1, (255,255,255))
+                    notification = myfont.render("It is "+P1+"'s turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
                     warning = True
             elif event.key == pygame.K_a and game_state == 0:
@@ -439,7 +512,7 @@ while not done:
                     screen.blit(notification, (225, 625-60)) 
                     warning = True
                 else:
-                    notification = myfont.render("It is player 1's turn", 1, (255,255,255))
+                    notification = myfont.render("It is "+P1+"'s turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))
                     warning = True
             elif event.key == pygame.K_d and game_state == 0:
@@ -454,7 +527,7 @@ while not done:
                     screen.blit(notification, (225, 625-60))
                     warning = True
                 else:
-                    notification = myfont.render("It is player 1's turn", 1, (255,255,255))
+                    notification = myfont.render("It is "+P1+"'s turn", 1, (255,255,255))
                     screen.blit(notification, (225, 625-60))  
                     warning = True
                         
@@ -480,6 +553,26 @@ while not done:
                 player = 1
                 winner = 0
                 game_state = 0
+            
+            if event.key == pygame.K_l:
+                root = Tk.Tk()
+                root.title("Top 5 Most Wins")
+                root.configure(bg = "black")
+                label = Tk.Label(root, bg = "black", fg = "white", text= usrTools.getTop5Players())
+                label.pack()
+                center(root)
+                label.after(8000, root.destroy)
+                root.mainloop()
+            
+            if event.key == pygame.K_c:
+                root = Tk.Tk()
+                root.title("Controls")
+                root.configure(bg = "black")
+                label = Tk.Label(root, bg = "black", fg = "white", text= "Player 1 must use the UP, DOWN, LEFT and RIGHT arrows.\n Player 2 must use the keys W, S, A and D.\n Press ENTER to cement your choice of placement")
+                label.pack()
+                center(root)
+                label.after(8000, root.destroy)
+                root.mainloop()                
         
     
     # Set the screen background
@@ -538,8 +631,3 @@ while not done:
     pygame.display.flip()
  
 pygame.quit()
-
-
-
-
-
