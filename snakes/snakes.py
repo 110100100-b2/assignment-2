@@ -138,10 +138,6 @@ def moveSnake(grid, direction, snakeCoords, screen):
             snakeCoords.insert(0, {'x': snakeCoords[0]['x']-1, 'y':snakeCoords[0]['y']}) #Adding new head
             if (ateApple(grid, snakeCoords)):
                 pass
-            elif(ateSelf(grid, snakeCoords)):
-                message = 'You bit yourself'
-                gameOver(screen, message)                
-                game_state = 1 
             elif(hitObstacle(grid, snakeCoords)):
                 message = 'You hit an obstacle'
                 gameOver(screen, message)                
