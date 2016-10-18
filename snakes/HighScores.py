@@ -1,28 +1,12 @@
 class HighScores: #helps with leaderboard
     
-    def __init__(self): #constructor, instead of using a dictionary, two lists are used. this is because the dictionary didn't allow for the same username to be present twice
+    def __init__(self): #constructor
         
         self.usr = []
-        self.scores  = []
-    
+           
     def addNewResult(self, username, score): #adds a new result
             
-        minimum = min(self.scores)
-        pos = 0
-            
-        for i in range(len(self.scores)):
-                
-            if i == minimum:
-                    
-                pos = i
-            
-        if minimum < score:
-                
-            self.scores.remove(minimum)
-            self.scores.append(score)
-            del self.usr[pos]
-            self.usr.append(username)
-                
+        self.usr.append(username + "," + str(score) + ",")
         
     def loadData(self): #loads the data
         
@@ -31,8 +15,7 @@ class HighScores: #helps with leaderboard
         for line in scFile:
             
             data = line.split(",")
-            self.usr.append(data[0])
-            self.scores.append(int(data[1]))
+            self.usr.append(data[0] + "," + data[1] + ",")
             
         scFile.close()
     
@@ -40,37 +23,31 @@ class HighScores: #helps with leaderboard
         
         scFile = open("HighScores.txt", "w")
         
-        for i in range(len(self.scores)):
+        for i in range(len(self.usr)):
             
-            line = self.usr[i] + "," + str(self.scores[i]) + ","
-            scFile.write(line + "\n")
+            scFile.write(self.usr[i] + "\n")
         
         scFile.close()
     
     def getTop5(self): #gets the leader board
         
-        ordName = []
-        ordScore = []
+        scores = []
+        names = []
+        pos = 0
         temp = "Leaderboard:\n\n"
         
-        for i in range(len(self.scores)):
+        for i in range(len(self.usr)):
             
-            maximum = max(self.scores)
-            ordScore.append(maximum)
-            pos = 0
+            data = self.usr[i].split(",")
+            names.append(data[0])
+            scores.append(int(data[1]))
             
-            for j in range(len(self.scores)):
-                
-                if maximum == j:
-                    
-                    pos = j
+        for j in range(5):
             
-            ordName.append(self.usr[pos])
-            self.scores.remove(maximum)
-            self.usr.remove(self.usr[pos])
-            temp = temp + str(i + 1) + ". " + ordName[i] + " - " + str(ordScore[i]) + "\n"
-            
-        self.usr = ordName
-        self.scores = ordScore
-        return temp
+            maximum = max(scores)
+            pos = scores.index(maximum)
+            temp = temp + str(j + 1) + ". " + names[pos] + " - " + str(scores[pos]) + "\n"
+            scores.remove(maximum)
+            names.remove(names[pos])
         
+        return temp
