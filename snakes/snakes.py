@@ -122,7 +122,7 @@ class username():
     
     def __init__(self):
         self.root = Tk.Tk()
-        self.root.wm_title("Tic-Tac-Toe")
+        self.root.wm_title("Snake")
         self.label = Tk.Label(self.root, text=("Enter your username: "))
         self.label.pack()
         self.name = Tk.StringVar()
