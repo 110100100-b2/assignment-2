@@ -1,4 +1,6 @@
 import pygame, os
+import Tkinter as Tk
+import HighScores
 from random import randint
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (200,50) # Centering screen as best as possible
@@ -33,6 +35,8 @@ score = 0
 game_state = 0
 difficulty = 1
 message = ''
+usrTools = HighScores.HighScores()
+usrTools.loadData()
 
 """
 ------------------------------------------------------------------------------------------------------------
@@ -90,7 +94,61 @@ pygame.display.set_caption("Snakes")
  
 # Loop until the user clicks the close button.
 done = False
+"""
 
+------------------------------------------------------------------------------------------------------------
+
+      CLASSES
+
+------------------------------------------------------------------------------------------------------------
+
+    
+"""            
+user={}
+
+def center(root): #to center our roots
+    root.update_idletasks() # to ensure accuracy in height and width values
+    width = root.winfo_screenwidth()
+    height = root.winfo_screenheight()
+    geo = root.geometry()
+    size = tuple(geo.split('x'))
+    size2 = tuple(size[1].split('+'))
+    
+    x = width/2 - int(size[0])/2
+    y = height/2 - int(size2[0])/2
+    root.geometry("%dx%d+%d+%d" % ((int(size[0]), int(size2[0])) + (x, y)))
+    
+class username():
+    
+    def __init__(self):
+        self.root = Tk.Tk()
+        self.root.wm_title("Tic-Tac-Toe")
+        self.label = Tk.Label(self.root, text=("Enter your username: "))
+        self.label.pack()
+        self.name = Tk.StringVar()
+        Tk.Entry(self.root, textvariable=self.name).pack()
+
+        self.buttontext = Tk.StringVar()
+        self.buttontext.set("Done")
+        Tk.Button(self.root,
+                  textvariable=self.buttontext,
+                  command=self.btnclicked).pack()
+
+        self.label = Tk.Label(self.root, text="")
+        self.label.pack()
+        center(self.root)
+
+        self.root.mainloop()
+        
+    def btnclicked(self):
+        
+        user['name']=self.name.get()
+        
+        self.label.destroy()
+        self.root.destroy()
+
+    def button_click(self, e):
+        pass
 """
 
 ------------------------------------------------------------------------------------------------------------
@@ -203,8 +261,8 @@ def gameOver(screen, message):
     h1 = pygame.font.SysFont("monospace", 36)
     h2 = pygame.font.SysFont("monospace", 22)
     h3 = pygame.font.SysFont("monospace", 15)
-    # render text
-    game_over = h1.render("Game Over!", 1, (255,255,0))
+    # render text    
+    game_over = h1.render("Game Over!", 1, (255,255,0))    
     if (message != ''):
         if (message == 'You bit yourself'):
             message_text = h2.render(message, 1, (255,255,0))
@@ -328,9 +386,10 @@ def hitObstacle(grid, snakeCoords):
 def drawBoard(screen):
     global score
     global difficulty
+    global P
     snakes_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 36)
     score_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 24)
-    score_text = score_font.render('Score: {}'.format(score), 1, (255,255,255))
+    score_text = score_font.render((P + "'s Score: {}").format(score), 1, (255,255,255))
     difficulty_font = pygame.font.Font('./fonts/Mohave-Bold-Italics.ttf', 20)
     eight_bit_wonder_font = pygame.font.Font('./fonts/8-bit-wonder.ttf', 28)
     difficulty_text = difficulty_font.render('Difficulty: {}'.format(difficulty), 1, (255,255,255))
@@ -339,14 +398,18 @@ def drawBoard(screen):
     info_text_1 = info_font.render('Avoid hitting the blue obstacles',1, (255,255,255))
     info_text_2 = info_font.render( 'Eat the apples to increase ',1,(255,255,255))
     info_text_3 = info_font.render( 'your score',1,(255,255,255))
+    info_text_4 = info_font.render("Press 'l' to save progress, ",1,(255,255,255))
+    info_text_5 = info_font.render("but not while game is active!",1,(255,255,255))
     legend = pygame.image.load('./images/legend.png')
     screen.blit(legend, (640, 120))
     screen.blit(snakes, (700, 50))
     screen.blit(info_text_1, (680, 315))
     screen.blit(info_text_2, (680, 345))
-    screen.blit(info_text_3, (680, 365))
-    screen.blit(difficulty_text, (700, 500))
-    screen.blit(score_text, (700, 550)) 
+    screen.blit(info_text_3, (680, 355))
+    screen.blit(info_text_4, (680, 385))
+    screen.blit(info_text_5, (680, 395))
+    screen.blit(difficulty_text, (680, 500))
+    screen.blit(score_text, (680, 550)) 
     
     
     
@@ -366,9 +429,13 @@ clock = pygame.time.Clock()
     
 """
 
+p = username()
+P = user['name']
+
 while not done:
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
+            usrTools.updateData()
             done = True  # Flag that we are done so we exit this loop
         
         elif event.type == pygame.KEYDOWN:
@@ -387,7 +454,17 @@ while not done:
             if event.key == pygame.K_r and game_state == 1:
                 reset()
                 game_state = 0
-    
+            if event.key == pygame.K_l and game_state == 1:
+                usrTools.addNewResult(P, score)
+                root = Tk.Tk()
+                root.title("Best Scores")
+                root.configure(bg = "black")
+                label = Tk.Label(root, bg = "black", fg = "white", text = usrTools.getTop5())
+                label.pack()
+                center(root)
+                label.after(8000, root.destroy)
+                root.mainloop()            
+            
     #Setting difficulty
     difficulty = (score // 3) + 1
     
@@ -406,7 +483,7 @@ while not done:
     
     #Displaying Game Over Screen
     if(game_state == 1):
-            gameOver(screen, message)       
+            gameOver(screen, message)
  
     # Limit to 15 frames per second
     clock.tick(8 + difficulty)
@@ -415,5 +492,3 @@ while not done:
     pygame.display.flip()
  
 pygame.quit()
-
-
