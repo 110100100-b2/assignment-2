@@ -37,6 +37,7 @@ difficulty = 1
 message = ''
 usrTools = HighScores.HighScores()
 usrTools.loadData()
+pause = False
 
 """
 ------------------------------------------------------------------------------------------------------------
@@ -399,24 +400,26 @@ def drawBoard(screen):
     info_text_2 = info_font.render( 'Eat the apples to increase ',1,(255,255,255))
     info_text_3 = info_font.render( 'your score',1,(255,255,255))
     info_text_4 = info_font.render("Press 'l' to save progress, ",1,(255,255,255))
-    info_text_5 = info_font.render("but not while game is active!",1,(255,255,255))
+    info_text_5 = info_font.render("but not while the game is active!",1,(255,255,255))
+    info_text_6 = info_font.render("Press 'p' to pause and 'u' to unpause",1,(255,255,255))
     legend = pygame.image.load('./images/legend.png')
     screen.blit(legend, (640, 120))
     screen.blit(snakes, (700, 50))
-    screen.blit(info_text_1, (680, 315))
-    screen.blit(info_text_2, (680, 345))
-    screen.blit(info_text_3, (680, 355))
-    screen.blit(info_text_4, (680, 385))
-    screen.blit(info_text_5, (680, 395))
-    screen.blit(difficulty_text, (680, 500))
-    screen.blit(score_text, (680, 550)) 
+    screen.blit(info_text_1, (675, 315))
+    screen.blit(info_text_2, (675, 345))
+    screen.blit(info_text_3, (675, 355))
+    screen.blit(info_text_4, (675, 385))
+    screen.blit(info_text_5, (675, 395))
+    screen.blit(info_text_6, (675, 415))
+    screen.blit(difficulty_text, (675, 500))
+    screen.blit(score_text, (675, 550)) 
     
     
     
  
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
- 
+  
 
 """
 
@@ -463,7 +466,18 @@ while not done:
                 label.pack()
                 center(root)
                 label.after(8000, root.destroy)
-                root.mainloop()            
+                root.mainloop()         
+            if event.key == pygame.K_p and game_state == 0:
+                pause = True
+                while pause:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                    if event.key == pygame.K_u:
+                        pause = False
+                    pygame.init()
+                    pygame.display.update()
+                
             
     #Setting difficulty
     difficulty = (score // 3) + 1
